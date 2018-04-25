@@ -14,7 +14,7 @@ It is recommended to install via the ProcessWire admin Modules > Site > Add New 
 
 ### Manually
 
-Download the files from github or the processwire repository: https://modules.processwire.com
+Download the files from github or the ProcessWire repository: https://modules.processwire.com/modules/page-query-builder/
 
 1. Copy all of the files for this module into /site/modules/PageQueryBuilder/
 2. Go to “Modules > Refresh” in your admin, and then click “install” for the this module.
