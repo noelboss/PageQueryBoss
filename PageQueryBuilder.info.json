@@ -1,0 +1,19 @@
+{
+	"title": "Page Query Builder",
+	"keywords": ["processwire", "module", "json", "array", "page"],
+	"name": "noelboss/array-query-builder",
+	"type": "pw-module",
+	"summary": "Build complex nested queries containing multipple fields and pages and return an array or json",
+	"homepage": "http://modules.processwire.com",
+	"license": "MIT",
+	"version": "0.0.1",
+	"autoload": true,
+	"singular": true,
+	"icon": "rss",
+	"authors": [{
+		"name": "Noel Bossart",
+		"email": "me@noelboss.com",
+		"homepage": "https://www.noelboss.com",
+		"role": "Developer"
+	}]
+}
