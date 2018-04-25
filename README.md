@@ -3,8 +3,9 @@
 Build complex nested queries containing multipple fields and pages and return an
 array that can be parsed to JSON. This is usefull to fetch data for SPA and PWA.
 
-You can use this module to tranfrom a ProcessWire Page or PageArray
-(or RepeaterMatrixPageArray…) into an array or JSON. Queries can be nested.
+You can use it to tranfrom a ProcessWire Page or PageArray, even RepeaterMatrixPageArrays
+into an array or JSON. Queries can be nested and contain closures as callback
+functions.
 
 ## Installation
 
@@ -81,7 +82,7 @@ Queries can be nested, call children etc:
 	* FieldtypeFunctional
 2. A **[template name](https://processwire.com/api/selectors/#finding1)**; `skyscraper` or `city`
 3. The **fieldname of a child** (child.name); `url` or `filename` or `title`
-4. [A ProcessWire selector](https://processwire.com/api/selectors/); `template=building, floors>=25`
+4. **[A ProcessWire selector](https://processwire.com/api/selectors/)**; `template=building, floors>=25`
 5. A **new name** for the returned index passed by a `#` delimiter:
 
 		// the field skyscraper will be renamed to "building":
