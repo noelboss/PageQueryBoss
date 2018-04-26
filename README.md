@@ -140,7 +140,26 @@ Queries can be nested, contain page names, template names or contain functions 
 				],
 			]);
 		},
-		// ProcessWire selector > name result "location"
+		// Child Pages with template=Program
+		'Program' => [
+			'title',
+			'summary',
+			'start' => function($parent){ // calculate the startdate from timetables
+				return $parent->children->first->date;
+			},
+			'end' => function($parent){ // calculate the endate from timetables
+				return $parent->children->last->date;
+			},
+			'Timetable' => [
+				'date', // date
+				'timetable#entry'=> [
+					'time#start', // time
+					'time_until#end', // time
+					'subtitle#description', // entry title
+				],
+			],
+		],
+		// ProcessWire selector, selecting children > name result "location"
 		'template=Location, limit=1#location' => [
 			'title#city', // summary title field to city
 			'body',
@@ -304,6 +323,7 @@ By default, a couple of fields are transformed automatically to contain numbered
 
 	// objects or template names that should use numerical indexes for children instead of names
 	$defaults['index-n'] => [
+		'skyscraper', // template name
 		'Pageimage',
 		'Pagefile',
 		'RepeaterMatrixPage',
