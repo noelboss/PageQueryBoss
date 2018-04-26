@@ -1,27 +1,28 @@
-# Page Query Builder
+# Page Query Boss
 
-Build complex nested queries containing multipple fields and pages and return an
-array that can be parsed to JSON. This is usefull to fetch data for SPA and PWA.
+Build complex nested queries containing multiple fields and pages and return an
+array that can be parsed to JSON. This is use-full to fetch data for SPA and PWA.
 
-You can use it to tranfrom a ProcessWire Page or PageArray, even RepeaterMatrixPageArrays
-into an array or JSON. Queries can be nested and contain closures as callback
-functions.
+You can use the Module to tranfrom a ProcessWire Page or PageArray – even
+RepeaterMatrixPageArrays – into an array or JSON. Queries can be nested and
+contain closures as callback functions. Some field-types are transformed
+automatically, like Pageimages or MapMarker.
 
 ## Installation
 
 ### Via ProcessWire Backend
-It is recommended to install via the ProcessWire admin Modules > Site > Add New > Add Module from Directory using the `PageQueryBuilder` class name.
+It is recommended to install via the ProcessWire admin "*Modules*" > "*Site*" > "*Add New*" > "*Add Module from Directory*" using the `PageQueryBoss` class name.
 
 ### Manually
 
-Download the files from github or the ProcessWire repository: https://modules.processwire.com/modules/page-query-builder/
+Download the files from Github or the ProcessWire repository: https://modules.processwire.com/modules/page-query-builder/
 
-1. Copy all of the files for this module into /site/modules/PageQueryBuilder/
+1. Copy all of the files for this module into /site/modules/PageQueryBoss/
 2. Go to “Modules > Refresh” in your admin, and then click “install” for the this module.
 
 ## Methods
 
-There are two main methos:
+There are two main methods:
 
 ### Return JSON
 
@@ -34,8 +35,8 @@ There are two main methos:
 
 ## Building the query
 
-The query can be with key value pairs, or only keys. and can be nested.
-To ilustrate a short example:
+The query can contain key and value pairs, or only keys. It can be nested and
+contain closures for dynamic values. To illustrate a short example:
 
 	// simple query:
 	$query = [
@@ -44,7 +45,7 @@ To ilustrate a short example:
 	];
 	$pages->find('template=skyscraper')->pageQueryJson($query);
 
-Queries can be nested, call children etc:
+Queries can be nested, contain page names, template names or contain functions and ProcessWire selectors:
 
 	// simple query:
 	$query = [
@@ -81,7 +82,7 @@ Queries can be nested, call children etc:
 	* MapMarker
 	* FieldtypeFunctional
 2. A **[template name](https://processwire.com/api/selectors/#finding1)**; `skyscraper` or `city`
-3. The **fieldname of a child** (child.name); `url` or `filename` or `title`
+3. **Name of a child page** (page.child.name=pagename); `my-page-name`
 4. **[A ProcessWire selector](https://processwire.com/api/selectors/)**; `template=building, floors>=25`
 5. A **new name** for the returned index passed by a `#` delimiter:
 
@@ -89,7 +90,7 @@ Queries can be nested, call children etc:
 		$query = ["skyscraper`#building`"]
 
 ### Key value pars:
-1. Any of the keys above with an new query array:
+1. Any of the keys above (1-5) with an new nested sub-query array:
 
 		$query = [
 			'skyscraper' => [
@@ -102,7 +103,7 @@ Queries can be nested, call children etc:
 			],
 		]
 
-2. A key and a **closure functions** to process and return a query. The closure gets the parent as argument:
+2. A named key and a **closure function** to process and return a query. The closure gets the parent object as argument:
 
 		$query = [
 			'architecs' => function($parent)
@@ -146,7 +147,7 @@ Queries can be nested, call children etc:
 			'country',
 			'venue',
 			'summary#address', // rename summary field to address
-			'link', // ticket link
+			'link#tickets', // rename ticket link
 			'map', // Mapmarker field, automatically transformed
 			'images',
 			'infos#categories' => [ // repeater matrix! > rename to categories
@@ -167,16 +168,17 @@ Queries can be nested, call children etc:
 
 ## Module default settings
 
-The modules settings are public. They can be adjusted, for example:
+The modules settings are public. They can be directly modified, for example:
 
-	$modules->get('PageQueryBuilder')->debug = true;
-	$modules->get('PageQueryBuilder')->defaults = []; // reset all defaults
+	$modules->get('PageQueryBoss')->debug = true;
+	$modules->get('PageQueryBoss')->defaults = []; // reset all defaults
 
 ### Default queries for fields:
 
-Some field types come with default selectors, like Pageimages etc.
-These are the default queries for template names or object types:
+Some field-types or templates come with default selectors, like Pageimages etc.
+These are the default queries:
 
+	// Access and modify default queries: $modules->get('PageQueryBoss')->defaults['queries'] …
 	public $defaults = [
 		'queries' => [
 			'Pageimages' => [
@@ -210,9 +212,9 @@ These are the default queries for template names or object types:
 		],
 	];
 
-These will only be used if there is no nested query for these types. So if
-you query a field with complex data and do not provide a sub-query, it will
-be transformed acordingly:
+These defaults will only be used if there is no nested sub-query for the respective type.
+If you query a field with complex data and do not provide a sub-query, it will be
+transformed accordingly:
 
 	$page->pageQueryArry(['images']);
 
@@ -232,7 +234,7 @@ be transformed acordingly:
 		]
 	];
 
-You can always provide your own sub-query so the defaults will not be used:
+You can always provide your own sub-query, so the defaults will not be used:
 
 	$page->pageQueryArry([
 		'images' => [
@@ -241,9 +243,11 @@ You can always provide your own sub-query so the defaults will not be used:
 		],
 	]);
 
-You can also override these, for example:
+### Overriding default queries:
 
-	$modules->get('PageQueryBuilder')->defaults['queries']['Pageimages'] = [
+You can also override the defaults, for example
+
+	$modules->get('PageQueryBoss')->defaults['queries']['Pageimages'] = [
 		'basename',
 		'url',
 		'description',
@@ -252,17 +256,17 @@ You can also override these, for example:
 
 ## Index of nested elements
 
-The index for nested elements can be adjusted. This is also done with
-defaults. There are 3 possibilities:
+The index for nested elements can be adjusted. This is also done with defaults.
+There are 3 possibilities:
 
 1. Nested by name (default)
 2. Nested by ID
-3. Nested by nummerical indey
+3. Nested by nummerical index
 
 #### Named index (default):
 
-This is the default. If you have a field that contains subpages, their key
-will be their name:
+This is the default setting. If you have a field that contains sub-items,
+the name will be the key in the results:
 
 	// example
 	$pagesByName = [
@@ -278,10 +282,10 @@ will be their name:
 
 #### ID based index:
 
-If an object is listed in $defaults['index-id'] their index will be their id.
-Currently, no items are listed as defautls:
+If an object is listed in $defaults['index-id'] the id will be the key in the results.
+Currently, no items are listed as defaults for id-based index:
 
-	$modules->get('PageQueryBuilder')->defaults['index-id']['Page'];
+	$modules->get('PageQueryBoss')->defaults['index-id']['Page'];
 	// example
 	$pagesById = [
 		123 => [
@@ -296,8 +300,7 @@ Currently, no items are listed as defautls:
 
 
 #### Number based index
-By default, a couple of fields are transformed automatically to contain numbered
-indexes:
+By default, a couple of fields are transformed automatically to contain numbered indexes:
 
 	// objects or template names that should use numerical indexes for children instead of names
 	$defaults['index-n'] => [
@@ -316,8 +319,8 @@ indexes:
 		]
 	]
 
-When you remove the key 'Pageimage' from $defaults['index-n'], the index will again
-be name-based.
+**Tipp:** When you remove the key 'Pageimage' from $defaults['index-n'], the index will
+again be name-based.
 
 ### Debug
 
@@ -325,13 +328,15 @@ The module respects wire('config')->debug. It integrates with TracyDebug.
 You can override it like so:
 
 	// turns on debug output no mather what:
-	$modules->get('PageQueryBuilder')->debug = true;
+	$modules->get('PageQueryBoss')->debug = true;
 
 ### Todos
 
-Make defualts configurable via Backend. **How could that be done in style with
+Make defaults configurable via Backend. **How could that be done in style with
 the default queries?**
 
 ## License: MIT
 
 See included LICENSE file for full license text.
+
+© noelboss.com
