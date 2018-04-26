@@ -150,6 +150,7 @@ class PageQueryBoss extends WireData implements Module {
 					$n++;
 				}
 				break;
+
 			default:
 				$map = $this->getMap($query);
 				$ar = $this->getFields($items, $map);
@@ -199,7 +200,7 @@ class PageQueryBoss extends WireData implements Module {
 	}
 
 
-	private function getFields($item, $map){
+	private function getFields($item, array $map){
 		$ar = [];
 		$n = 0;
 		foreach ($map as $m) {
@@ -222,28 +223,31 @@ class PageQueryBoss extends WireData implements Module {
 
 	private function getField($item, string $selector, $transformer){
 		$value = null;
-		$field = null;
+
 		if ($this->_is_closure($transformer)) { // if we have a closure, call it...
 			$value = $transformer($item);
 		} else {
 			$value = $item->get($selector);
 
-			if(method_exists( $item, 'getField')){
-				$field = $item->getField($selector);
-			}
+			//dump(wire('sanitizer')->selectorValue($selector));
 
 			// we have no results, we check if there are children…
-			if(null === $value){
-				$value = $item->child(['name'=>$selector]);
+			if( ($value instanceof Nullpage == true || null === $value) && method_exists( $item, 'child')){
+				$value = $item->child('name='.wire('sanitizer')->selectorValue($selector));
 			}
-			if(null === $value){
-				$value = $item->children(['template'=>$selector]);
+			if( ($value instanceof Nullpage == true || null === $value) && method_exists( $item, 'children')){
+				$value = $item->children('template='.wire('sanitizer')->selectorValue($selector));
 			}
-			if(null === $value){
-				$value = $item->children(wire('sanitizer')->selector($selector));
+			if( ($value instanceof Nullpage == true || null === $value) && method_exists( $item, 'children')){
+				$value = $item->children($selector);
 			}
 		}
-		$value = $this->processField($value, $transformer, $selector);
+		if($value && $value instanceof Nullpage !== true){
+			$value = $this->processField($value, $transformer, $selector);
+		} else {
+			//$this-d([$item,$selector], "getField – could not find elements with '$selector'");
+			$value = null;
+		}
 		return $value;
 	}
 
