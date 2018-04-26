@@ -14,7 +14,7 @@
 
 namespace ProcessWire;
 
-class PageQueryBuilder extends WireData implements Module {
+class PageQueryBoss extends WireData implements Module {
 
 	/**
 	 * Module defualts…
