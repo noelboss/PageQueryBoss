@@ -6,9 +6,7 @@
 	"summary": "A ProcessWire Module to build complex nested queries containing multipple fields and pages and return an array that can be parsed to JSON. This is usefull to fetch data for SPA and PWA.",
 	"homepage": "http://modules.processwire.com",
 	"license": "MIT",
-	"version": "0.0.2",
-	"autoload": true,
-	"singular": true,
+	"version": "0.0.3",
 	"icon": "rss",
 	"authors": [{
 		"name": "Noel Bossart",
