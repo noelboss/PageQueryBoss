@@ -227,7 +227,7 @@ class PageQueryBoss extends WireData implements Module {
 	}
 
 
-	private function ___getFields($item, array $map){
+	public function ___getFields($item, array $map){
 		$ar = [];
 		$n = 0;
 		foreach ($map as $m) {
@@ -248,7 +248,7 @@ class PageQueryBoss extends WireData implements Module {
 	}
 
 
-	private function ___getField($item, string $selector, $transformer){
+	public function ___getField($item, string $selector, $transformer){
 		$value = null;
 
 		if ($this->_is_closure($transformer)) { // if we have a closure, call it...
@@ -293,7 +293,7 @@ class PageQueryBoss extends WireData implements Module {
 	    return true;
 	}
 
-	private function ___processField($value, $transformer = null, $selector = null){
+	public	 function ___processField($value, $transformer = null, $selector = null){
 		$className = $this->getClassName($value);
 
 		$this->d([$value, $transformer, $selector], "processField ($className)");
