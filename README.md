@@ -404,6 +404,30 @@ you guess, keys and the `body` field as values:
 		return array_column($page->get('strings')->each(['key', 'body']), 'body', 'key');
 	}];
 
+### Multilanguage with default language fallback
+
+Using the following setup you can handle multilanguage and return your default
+language if the requested language does not exist. The url is composed like so:
+`page/path/{language}/{content-type}` for example: `api/icf/zurich/conference/2019/de/json`
+
+
+	// get contenttype and language (or default language if not exists)
+	$lang = wire('languages')->get($input->urlSegment1);
+	if(!$lang instanceof Nullpage){
+		$user->language = $lang;
+	} else {
+		$lang = $user->language;
+	}
+
+	// contenttype segment 2 or 1 if language not present
+	$contenttype = $input->urlSegment2 ? $input->urlSegment2 : $input->urlSegment1;
+
+	if ($contenttype === 'json') {
+		header('Content-type: application/json');
+		echo $page->pageQueryJson($query);
+		exit();
+	}
+
 ## Debug
 
 The module respects wire('config')->debug. It integrates with TracyDebug.
