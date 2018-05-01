@@ -45,7 +45,7 @@ contain closures for dynamic values. To illustrate a short example:
 	];
 	$pages->find('template=skyscraper')->pageQueryJson($query);
 
-Queries can be nested, contain page names, template names or contain functions and ProcessWire selectors:
+Queries can be nested, contain page names, template names or contain functions and ProcessWire selectors:
 
 	// simple query:
 	$query = [
@@ -103,7 +103,7 @@ Queries can be nested, contain page names, template names or contain functions 
 			],
 		]
 
-2. A named key and a **closure function** to process and return a query. The closure gets the parent object as argument:
+2. A named key and a **closure function** to process and return a query. The closure gets the parent object as argument:
 
 		$query = [
 			'architecs' => function($parent)
@@ -187,7 +187,7 @@ Queries can be nested, contain page names, template names or contain functions 
 
 ## Module default settings
 
-The modules settings are public. They can be directly modified, for example:
+The modules settings are public. They can be directly modified, for example:
 
 	$modules->get('PageQueryBoss')->debug = true;
 	$modules->get('PageQueryBoss')->defaults = []; // reset all defaults
@@ -197,9 +197,17 @@ The modules settings are public. They can be directly modified, for example:
 Some field-types or templates come with default selectors, like Pageimages etc.
 These are the default queries:
 
-	// Access and modify default queries: $modules->get('PageQueryBoss')->defaults['queries'] …
+	// Access and modify default queries: $modules->get('PageQueryBoss')->defaults['queries'] = …
 	public $defaults = [
 		'queries' => [
+			'Pageimage' => [
+				'basename',
+				'url',
+				'httpUrl',
+				'description',
+				'ext',
+				'focus',
+			],
 			'Pageimages' => [
 				'basename',
 				'url',
@@ -207,6 +215,16 @@ These are the default queries:
 				'description',
 				'ext',
 				'focus',
+			],
+			'Pagefile' => [
+				'basename',
+				'url',
+				'httpUrl',
+				'description',
+				'ext',
+				'filesize',
+				'filesizeStr',
+				'hash',
 			],
 			'Pagefiles' => [
 				'basename',
@@ -232,7 +250,7 @@ These are the default queries:
 	];
 
 These defaults will only be used if there is no nested sub-query for the respective type.
-If you query a field with complex data and do not provide a sub-query, it will be
+If you query a field with complex data and do not provide a sub-query, it will be
 transformed accordingly:
 
 	$page->pageQueryArry(['images']);
@@ -339,10 +357,54 @@ By default, a couple of fields are transformed automatically to contain numbered
 		]
 	]
 
-**Tipp:** When you remove the key 'Pageimage' from $defaults['index-n'], the index will
+**Tipp:** When you remove the key `Pageimage` from $defaults['index-n'], the index will
 again be name-based.
 
-### Debug
+## Helpfull closures & tipps
+
+These are few helpfill closure functions you might want to use or could help as a
+starting point for your own (let me know if you have your own):
+
+
+### Get an overview of languages:
+
+	$query = ['languages' => function($page){
+		$ar = [];
+		$l=0;
+		foreach (wire('languages') as $language) {
+			// build the json url with segment 1
+			$ar[$l]['url']= $page->localHttpUrl($language).wire('input')->urlSegment1;
+			$ar[$l]['name'] = $language->name == 'default' ? 'en' : $language->name;
+			$ar[$l]['title'] = $language->getLanguageValue($language, 'title');
+			$ar[$l]['active'] = $language->id == wire('user')->language->id;
+			$l++;
+		}
+		return $ar;
+	}];
+
+### Get county info from ContinentsAndCountries Module
+
+Using the [ContinentsAndCountries Module](https://modules.processwire.com/modules/continents-and-countries/) you can extract iso
+code and names for countries:
+
+	$query = ['country' => function($page){
+		$c = wire('modules')->get('ContinentsAndCountries')->findBy('countries', array('name', 'iso', 'code'),['code' =>$page->country]);
+		return count($c) ? (array) $c[count($c)-1] : null;
+	}];
+
+### Custom strings from a RepeaterTable for interface
+
+Using a RepeaterMatrix you can create template string for your frontend. This is
+usefull for buttons, labels etc. The following code uses a repeater with the
+name `strings` has a `key` and a `body` field, the returned array contains the `key` field as,
+you guess, keys and the `body` field as values:
+
+	// build custom translations
+	$query = ['strings' => function($page){
+		return array_column($page->get('strings')->each(['key', 'body']), 'body', 'key');
+	}];
+
+## Debug
 
 The module respects wire('config')->debug. It integrates with TracyDebug.
 You can override it like so:
@@ -350,7 +412,7 @@ You can override it like so:
 	// turns on debug output no mather what:
 	$modules->get('PageQueryBoss')->debug = true;
 
-### Todos
+## Todos
 
 Make defaults configurable via Backend. **How could that be done in style with
 the default queries?**
