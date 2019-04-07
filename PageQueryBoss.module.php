@@ -385,7 +385,7 @@ class PageQueryBoss extends WireData implements Module {
 		if(!$this->debug) return;
 		if(is_callable("bd")){
 			bd(...$args);
-		} else {
+		} else if(is_callable("d")) {
 			d(...$args);
 		}
 	}
