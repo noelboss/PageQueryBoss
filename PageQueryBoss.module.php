@@ -1,12 +1,14 @@
 <?php
 
 /**
- * © ICF Church – <web@icf.ch>
+ * ArrayQueryBuilder
+ *
+ * Build complex nested queries containing multipple fields and pages and return an array that can be parsed to JSON
  *
  * This source file is subject to the license file that is bundled
  * with this source code in the file LICENSE.
  *
- * File created/changed: 2019-04-07T14:54:17+02:00
+ * @author Noel Bossart <me@noelboss.com>
  */
 
 namespace ProcessWire;
