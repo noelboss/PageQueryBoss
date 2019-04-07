@@ -8,6 +8,10 @@ RepeaterMatrixPageArrays – into an array or JSON. Queries can be nested and
 contain closures as callback functions. Some field-types are transformed
 automatically, like Pageimages or MapMarker.
 
+## Release Updates
+
+Checkout the [Releases Page and subscribe to updates](http://releases.noelboss.com/pagequeryboss).
+
 ## Installation
 
 ### Via ProcessWire Backend
